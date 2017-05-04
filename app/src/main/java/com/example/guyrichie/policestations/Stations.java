@@ -1,5 +1,8 @@
 package com.example.guyrichie.policestations;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
 
@@ -53,5 +56,18 @@ public class Stations extends FragmentActivity implements OnMapReadyCallback {
         mMap.addMarker(new MarkerOptions().position(place3).title("Marker in Akuafo").icon(BitmapDescriptorFactory.fromResource(R.drawable.goil)));
         LatLng place4 = new LatLng(5.790878,-0.190876 );
         mMap.addMarker(new MarkerOptions().position(place4).title("Marker in Akuafo").icon(BitmapDescriptorFactory.fromResource(R.drawable.goil)));
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        mMap.setMyLocationEnabled(true);
     }
+
 }
