@@ -2,9 +2,13 @@ package com.example.guyrichie.policestations;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.EditText;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -13,6 +17,9 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+
+import java.io.IOException;
+import java.util.List;
 
 public class Stations extends FragmentActivity implements OnMapReadyCallback {
 
@@ -41,6 +48,15 @@ public class Stations extends FragmentActivity implements OnMapReadyCallback {
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        googleMap.getUiSettings().setZoomControlsEnabled(true);
+        googleMap.getUiSettings().setCompassEnabled(true);
+        googleMap.getUiSettings().setMyLocationButtonEnabled(true);
+        googleMap.getUiSettings().setMapToolbarEnabled(true);
+        googleMap.getUiSettings().setZoomGesturesEnabled(true);
+        googleMap.getUiSettings().setScrollGesturesEnabled(true);
+        googleMap.getUiSettings().setTiltGesturesEnabled(true);
+        googleMap.getUiSettings().setRotateGesturesEnabled(true);
+
 
         // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(5.648616,-0.189135 );
@@ -139,6 +155,28 @@ public class Stations extends FragmentActivity implements OnMapReadyCallback {
             return;
         }
         mMap.setMyLocationEnabled(true);
+
+
+    }
+
+
+    public void OnSearch(View view){
+        EditText location_tf=(EditText)findViewById(R.id.Tfaddress);
+        String location = location_tf.getText().toString();
+        List<Address> addressList=null;
+        if(location!=null || !location.equals("")){
+            Geocoder geocoder= new Geocoder(this);
+            try {
+                addressList=geocoder.getFromLocationName(location,1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            Address address= addressList.get(0);
+            LatLng latLng= new LatLng(address.getLatitude(),address.getLongitude());
+            //mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Sydney"));
+           // mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+        }
     }
 
 }
