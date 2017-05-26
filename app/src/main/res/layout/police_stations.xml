@@ -10,31 +10,12 @@
         android:layout_height="wrap_content"
         android:weightSum="1">
 
-        <EditText
-            android:id="@+id/Tfaddress"
-            android:layout_width="194dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.79"
-            android:ems="10"
-            android:hint="Search for place"
-            android:inputType="textPersonName"
+        <fragment
+            android:id="@+id/place_autocomplete_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
             />
-
-        <Button
-            android:id="@+id/Bsearch"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="OnSearch"
-            android:text="Search"
-            android:textColorLink="@android:color/holo_orange_dark" />
-
-        <Button
-            android:id="@+id/Btype"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:onClick="changeType"
-            android:text="Type"
-            android:textColorLink="@android:color/holo_orange_dark" />
     </LinearLayout>
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"

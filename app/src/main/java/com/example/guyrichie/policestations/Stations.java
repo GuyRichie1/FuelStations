@@ -7,13 +7,20 @@ import android.location.Geocoder;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -24,7 +31,7 @@ import java.util.List;
 public class Stations extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-
+    private static final String TAG = "Stations";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -155,28 +162,53 @@ public class Stations extends FragmentActivity implements OnMapReadyCallback {
             return;
         }
         mMap.setMyLocationEnabled(true);
+        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
+                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                // TODO: Get info about the selected place.
+
+                Log.i(TAG, "Place: " + place.getName());
+                Log.i(TAG, "Place: " + place.getAddress());
+                Log.i(TAG, "location: " + place.getLatLng().toString());
+                if (place.getLatLng() != null) {
+                    //Toast.makeText(getContext(), "GPS location was found!", Toast.LENGTH_SHORT).show();
+                    LatLng latLng = new LatLng(place.getLatLng().latitude, place.getLatLng().longitude);
+                    CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(latLng, 15);
+                    mMap.animateCamera(cameraUpdate);
+
+                    BitmapDescriptor markerId =
+                            BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN);
+                    mMap.addMarker(new MarkerOptions()
+                            .position(place.getLatLng())
+                            .title(place.getName().toString())
+                            .snippet(place.getAddress().toString())
+                            .icon(markerId));
+
+                }
 
 
-    }
 
-
-    public void OnSearch(View view){
-        EditText location_tf=(EditText)findViewById(R.id.Tfaddress);
-        String location = location_tf.getText().toString();
-        List<Address> addressList=null;
-        if(location!=null || !location.equals("")){
-            Geocoder geocoder= new Geocoder(this);
-            try {
-                addressList=geocoder.getFromLocationName(location,1);
-            } catch (IOException e) {
-                e.printStackTrace();
             }
-            Address address= addressList.get(0);
-            LatLng latLng= new LatLng(address.getLatitude(),address.getLongitude());
-            //mMap.addMarker(new MarkerOptions().position(latLng).title("Marker in Sydney"));
-           // mMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
-            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-        }
+
+
+
+
+            @Override
+            public void onError(Status status) {
+                // TODO: Handle the error.
+                Log.i(TAG, "An error occurred: " + status);
+            }
+
+
+
+        });
+
     }
+
+
+
 
 }
